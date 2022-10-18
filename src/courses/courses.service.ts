@@ -1,18 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import { createCourseDTO } from './DTOs/createCourse.dto';
+import { updateCouseDTO } from './DTOs/updateCourse.dto';
 import { Course } from './entities/course.entity';
-
-interface createCourseDTO {
-  id: number;
-  name: string;
-  description: string;
-  tags: string[];
-}
-
-interface updateCouseDTO {
-  name?: string;
-  description?: string;
-  tags?: string[];
-}
 
 @Injectable()
 export class CoursesService {
@@ -30,11 +19,21 @@ export class CoursesService {
   }
 
   findOne(id: string): Course {
-    return this.courses.find((course) => course.id === Number(id));
+    const course = this.courses.find((course) => course.id === Number(id));
+
+    if (!course) {
+      throw new HttpException(
+        `Course ID ${id} not found`,
+        HttpStatus.NOT_FOUND,
+      );
+    }
+
+    return course;
   }
 
   create(course: createCourseDTO): void {
-    this.courses.push(course);
+    const idCourse = this.courses.length + 1;
+    this.courses.push({ id: idCourse, ...course });
   }
 
   update(id: string, data: updateCouseDTO): Course {

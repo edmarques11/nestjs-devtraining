@@ -3,20 +3,12 @@ import {
   Controller,
   Delete,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   Patch,
   Post,
-  Res,
 } from '@nestjs/common';
-import { Response } from 'express';
 import { CoursesService } from './courses.service';
-
-interface SaveCourseDTO {
-  name: string;
-  description?: string;
-}
+import { createCourseDTO } from './DTOs/createCourse.dto';
 
 interface updateDataCourseDTO {
   name?: string;
@@ -28,28 +20,27 @@ export class CoursesController {
   constructor(private readonly coursesService: CoursesService) {}
 
   @Get()
-  findAll(@Res() response: Response) {
-    return response.status(HttpStatus.OK).send('Listagem de cursos');
+  findAll() {
+    return this.coursesService.findAll();
   }
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return `Curso #${id}`;
+    return this.coursesService.findOne(id);
   }
 
   @Post()
-  @HttpCode(HttpStatus.NO_CONTENT)
-  create(@Body() body: SaveCourseDTO) {
-    return body;
+  create(@Body() body: createCourseDTO) {
+    return this.coursesService.create(body);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() body: updateDataCourseDTO) {
-    return `atualização do curso ${id}\n${JSON.stringify(body)}`;
+    return this.coursesService.update(id, body);
   }
 
   @Delete(':id')
   deleteCourse(@Param('id') id: string) {
-    return `Exclusão do curso #${id}`;
+    return this.coursesService.remove(id);
   }
 }
