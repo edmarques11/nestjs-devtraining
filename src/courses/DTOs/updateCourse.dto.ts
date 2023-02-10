@@ -1,5 +1,5 @@
 export interface updateCouseDTO {
-  name?: string;
-  description?: string;
-  tags?: string[];
+  readonly name?: string;
+  readonly description?: string;
+  readonly tags?: string[];
 }
